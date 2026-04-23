@@ -15,6 +15,14 @@ export default defineConfig({
     watch: {
       usePolling: true,
       interval: 100,
-    }
+    },
+    proxy: {
+      '/api': {
+        bypass: (req) => {
+          // 让 Express 处理 API 请求
+          return req.url;
+        },
+      },
+    },
   },
 });
