@@ -26,9 +26,9 @@ async function startServer(): Promise<Server> {
     });
   }
 
-  // 添加请求体解析
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  // 添加请求体解析 - 增加 limit 以支持图片上传
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
   // 注册 API 路由
   app.use(router);

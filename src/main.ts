@@ -133,19 +133,18 @@ function initAvatarUpload(): void {
       return;
     }
 
-    // 验证文件大小 (5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('图片大小不能超过 5MB');
-      return;
-    }
-
     // 显示上传中状态
     uploadBtn.disabled = true;
-    uploadBtn.innerHTML = '<span class="upload-loading">上传中...</span>';
+    uploadBtn.innerHTML = '<span class="upload-loading">压缩中...</span>';
 
     try {
-      // 转换为 base64
-      const base64 = await fileToBase64(file);
+      // 压缩并转换为 base64
+      const { base64, resized } = await compressImage(file);
+
+      // 如果图片被压缩，显示"上传中..."
+      if (resized) {
+        uploadBtn.innerHTML = '<span class="upload-loading">上传中...</span>';
+      }
 
       // 上传到服务器
       const response = await fetch('/api/avatar/upload', {
@@ -156,7 +155,7 @@ function initAvatarUpload(): void {
         body: JSON.stringify({
           imageData: base64,
           fileName: file.name,
-          mimeType: file.type,
+          mimeType: 'image/jpeg',
         }),
       });
 
@@ -211,6 +210,57 @@ function fileToBase64(file: File): Promise<string> {
       resolve(base64);
     };
     reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// 压缩图片并转换为 base64
+function compressImage(file: File): Promise<{ base64: string; resized: boolean }> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        // 头像最大尺寸 400x400
+        const maxSize = 400;
+        let width = img.width;
+        let height = img.height;
+
+        // 计算缩放比例
+        if (width > maxSize || height > maxSize) {
+          if (width > height) {
+            height = Math.round((height * maxSize) / width);
+            width = maxSize;
+          } else {
+            width = Math.round((width * maxSize) / height);
+            height = maxSize;
+          }
+        }
+
+        // 创建画布并压缩
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('无法创建画布上下文'));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // 压缩为 JPEG，质量 0.8
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        const base64 = dataUrl.split(',')[1];
+
+        resolve({
+          base64,
+          resized: width < img.width || height < img.height,
+        });
+      };
+      img.onerror = () => reject(new Error('无法加载图片'));
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = () => reject(new Error('无法读取文件'));
     reader.readAsDataURL(file);
   });
 }
