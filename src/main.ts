@@ -5,17 +5,39 @@ interface Message {
   content: string;
 }
 
+// 默认头像 URL（本地生成的）
+const DEFAULT_AVATAR_TEXT = 'WX';
+
+// 存储当前头像状态
+let currentAvatar: { type: 'text' | 'image'; value: string } = { type: 'text', value: DEFAULT_AVATAR_TEXT };
+
 // 渲染页面
 function renderPage(): void {
   const app = document.getElementById('app');
   if (!app) return;
+
+  const avatarHtml = currentAvatar.type === 'image'
+    ? `<img src="${currentAvatar.value}" alt="头像" class="avatar-img" />`
+    : `<span>${currentAvatar.value}</span>`;
 
   app.innerHTML = `
     <div class="app-container">
       <!-- 头部区域 -->
       <header class="header">
         <div class="profile-section">
-          <div class="avatar">WX</div>
+          <div class="avatar-wrapper">
+            <div class="avatar" id="avatarContainer">
+              ${avatarHtml}
+            </div>
+            <button class="avatar-upload-btn" id="avatarUploadBtn" title="上传头像">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </button>
+            <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;" />
+          </div>
           <div class="profile-info">
             <h1>WX</h1>
             <p class="tagline">一个正在学习将AI与教育教学深度融合的大学教师</p>
@@ -80,8 +102,117 @@ function renderPage(): void {
     </div>
   `;
 
+  // 初始化头像上传功能
+  initAvatarUpload();
   // 初始化聊天功能
   initChat();
+}
+
+// 头像上传功能
+function initAvatarUpload(): void {
+  const uploadBtn = document.getElementById('avatarUploadBtn') as HTMLButtonElement;
+  const avatarInput = document.getElementById('avatarInput') as HTMLInputElement;
+  const avatarContainer = document.getElementById('avatarContainer');
+
+  if (!uploadBtn || !avatarInput || !avatarContainer) return;
+
+  // 点击上传按钮触发文件选择
+  uploadBtn.addEventListener('click', () => {
+    avatarInput.click();
+  });
+
+  // 文件选择后处理上传
+  avatarInput.addEventListener('change', async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    // 验证文件类型
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('请选择 JPG、PNG、GIF 或 WebP 格式的图片');
+      return;
+    }
+
+    // 验证文件大小 (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('图片大小不能超过 5MB');
+      return;
+    }
+
+    // 显示上传中状态
+    uploadBtn.disabled = true;
+    uploadBtn.innerHTML = '<span class="upload-loading">上传中...</span>';
+
+    try {
+      // 转换为 base64
+      const base64 = await fileToBase64(file);
+
+      // 上传到服务器
+      const response = await fetch('/api/avatar/upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          imageData: base64,
+          fileName: file.name,
+          mimeType: file.type,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || '上传失败');
+      }
+
+      const data = await response.json();
+
+      // 更新头像显示
+      currentAvatar = { type: 'image', value: data.url };
+      avatarContainer.innerHTML = `<img src="${data.url}" alt="头像" class="avatar-img" />`;
+
+      // 保存到本地存储以便刷新后保持
+      localStorage.setItem('userAvatarUrl', data.url);
+
+      console.log('头像上传成功');
+    } catch (error) {
+      console.error('上传失败:', error);
+      alert('上传失败，请重试');
+    } finally {
+      uploadBtn.disabled = false;
+      uploadBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+      `;
+      // 清空 input 以允许重复选择同一文件
+      avatarInput.value = '';
+    }
+  });
+
+  // 检查本地存储中是否有已保存的头像
+  const savedAvatarUrl = localStorage.getItem('userAvatarUrl');
+  if (savedAvatarUrl) {
+    currentAvatar = { type: 'image', value: savedAvatarUrl };
+    avatarContainer.innerHTML = `<img src="${savedAvatarUrl}" alt="头像" class="avatar-img" />`;
+  }
+}
+
+// 将文件转换为 base64
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      // 去掉 data:image/...;base64, 前缀
+      const base64 = result.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 // 聊天功能
@@ -94,7 +225,6 @@ function initChat(): void {
 
   if (!chatMessagesEl || !chatInput || !sendBtn) return;
 
-  // 确保 chatMessages 不为 null
   const chatMessages = chatMessagesEl;
 
   // 发送消息

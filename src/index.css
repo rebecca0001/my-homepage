@@ -82,6 +82,53 @@ body {
   color: white;
   box-shadow: 0 8px 32px rgba(74, 144, 217, 0.4);
   border: 4px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+.avatar span {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-wrapper {
+  position: relative;
+}
+
+.avatar-upload-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+  border: 3px solid white;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-upload-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(30, 58, 95, 0.4);
+}
+
+.avatar-upload-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.upload-loading {
+  font-size: 0.625rem;
 }
 
 .profile-info h1 {

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { LLMClient, Config } from 'coze-coding-dev-sdk';
+import { S3Storage } from 'coze-coding-dev-sdk';
 
 const router = Router();
 
@@ -64,6 +65,72 @@ router.get('/api/health', (_req, res) => {
     env: process.env.COZE_PROJECT_ENV,
     timestamp: new Date().toISOString(),
   });
+});
+
+// 初始化 S3 存储
+const storage = new S3Storage({
+  endpointUrl: process.env.COZE_BUCKET_ENDPOINT_URL,
+  bucketName: process.env.COZE_BUCKET_NAME,
+  region: 'cn-beijing',
+});
+
+console.log('[Storage] Initialized with bucket:', process.env.COZE_BUCKET_NAME);
+
+// 头像上传接口
+router.post('/api/avatar/upload', async (req, res) => {
+  try {
+    const { imageData, fileName, mimeType } = req.body as {
+      imageData?: string;
+      fileName?: string;
+      mimeType?: string;
+    };
+
+    if (!imageData || !fileName) {
+      res.status(400).json({ error: 'Missing imageData or fileName' });
+      return;
+    }
+
+    // 验证文件类型
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const actualMimeType = mimeType || 'image/jpeg';
+    if (!allowedTypes.includes(actualMimeType)) {
+      res.status(400).json({ error: 'Invalid file type. Allowed: JPEG, PNG, GIF, WebP' });
+      return;
+    }
+
+    // 解码 base64 数据
+    const buffer = Buffer.from(imageData, 'base64');
+
+    // 验证文件大小 (最大 5MB)
+    if (buffer.length > 5 * 1024 * 1024) {
+      res.status(400).json({ error: 'File too large. Maximum size is 5MB' });
+      return;
+    }
+
+    // 生成唯一文件名
+    const ext = fileName.split('.').pop() || 'jpg';
+    const newFileName = `avatars/avatar_${Date.now()}.${ext}`;
+
+    // 上传文件
+    const fileKey = await storage.uploadFile({
+      fileContent: buffer,
+      fileName: newFileName,
+      contentType: actualMimeType,
+    });
+
+    console.log('[Avatar] Uploaded:', fileKey);
+
+    // 生成签名 URL (有效期 30 天)
+    const avatarUrl = await storage.generatePresignedUrl({
+      key: fileKey,
+      expireTime: 30 * 24 * 60 * 60, // 30 days
+    });
+
+    res.json({ success: true, key: fileKey, url: avatarUrl });
+  } catch (error) {
+    console.error('[Avatar] Upload error:', error);
+    res.status(500).json({ error: 'Failed to upload avatar' });
+  }
 });
 
 interface ChatMessage {
