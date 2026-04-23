@@ -351,6 +351,29 @@ body {
   font-size: 0.875rem;
 }
 
+.footer p {
+  margin-bottom: 0.5rem;
+}
+
+.contact-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--primary-dark);
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  background: rgba(30, 58, 95, 0.05);
+  transition: all 0.2s ease;
+}
+
+.contact-email:hover {
+  background: rgba(30, 58, 95, 0.1);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
 /* 滚动条样式 */
 .chat-messages::-webkit-scrollbar {
   width: 6px;
