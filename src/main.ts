@@ -53,11 +53,11 @@ function renderPage(): void {
           <div class="about-content">
             <div class="info-item">
               <span class="info-label">研究方向</span>
-              <span class="info-value">人工智能通识课程教学 & 现代教育技术</span>
+              <span class="info-value">智慧教育</span>
             </div>
             <div class="info-item">
               <span class="info-label">当前工作</span>
-              <span class="info-value">本科AI通识课教学 & 硕士生培养</span>
+              <span class="info-value">本科AI通识课教学 & 现代教育技术硕士生培养</span>
             </div>
             <div class="info-item">
               <span class="info-label">个人兴趣</span>
@@ -67,9 +67,116 @@ function renderPage(): void {
                 <span class="tag">花样滑冰</span>
               </div>
             </div>
+            <div class="info-item">
+              <span class="info-label">教育背景</span>
+              <div class="education-list">
+                <div class="education-item">
+                  <div class="education-degree">博士</div>
+                  <div class="education-school">西南大学</div>
+                  <div class="education-major">农业资源利用</div>
+                  <div class="education-year">2005-2009</div>
+                </div>
+                <div class="education-item">
+                  <div class="education-degree">硕士</div>
+                  <div class="education-school">西南大学</div>
+                  <div class="education-major">农业机械化工程</div>
+                  <div class="education-year">2001-2004</div>
+                </div>
+                <div class="education-item">
+                  <div class="education-degree">学士</div>
+                  <div class="education-school">中国人民解放军空军雷达学院</div>
+                  <div class="education-major">电子信息</div>
+                  <div class="education-year">1994-1998</div>
+                </div>
+              </div>
+            </div>
             <div class="highlight">
               <span class="info-label">一个特点</span>
               <span class="info-value">温和、耐心，喜欢把复杂问题讲成人听得懂的话</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 主要研究项目 -->
+        <section class="card research-card">
+          <h2 class="card-title">主要研究项目</h2>
+          <div class="projects-list">
+            <div class="project-item">
+              <div class="project-header">
+                <span class="project-name">基于GIS与知识发现的山地作物种植区划研究</span>
+                <span class="project-role">主持</span>
+              </div>
+              <div class="project-org">重庆市科技局</div>
+            </div>
+            <div class="project-item">
+              <div class="project-header">
+                <span class="project-name">竹片粗铣连续化定向进料系统研发</span>
+                <span class="project-role">主持</span>
+              </div>
+              <div class="project-org">委托研发</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 主要教改项目 -->
+        <section class="card projects-card">
+          <h2 class="card-title">主要教改项目</h2>
+          <div class="projects-list">
+            <div class="project-item">
+              <div class="project-header">
+                <span class="project-name">数智化赋能的跨学科人工智能通识课程分层递进式实验教学体系重构与实践研究</span>
+                <span class="project-role">主持</span>
+              </div>
+              <div class="project-org">西南大学教改项目</div>
+              <div class="project-code">SWU260622</div>
+            </div>
+            <div class="project-item">
+              <div class="project-header">
+                <span class="project-name">基于学习者职业能力提升为导向的高等继续教育《专业英语》课程案例库建设</span>
+                <span class="project-role">主持</span>
+              </div>
+              <div class="project-org">西南大学网络与继续教育教学研究项目</div>
+              <div class="project-code">SWU1908039</div>
+            </div>
+            <div class="project-item">
+              <div class="project-header">
+                <span class="project-name">基于项目驱动的电子商务课程教学改革与实践</span>
+                <span class="project-role">主持</span>
+              </div>
+              <div class="project-org">西南大学教改项目</div>
+              <div class="project-code">2015JY029</div>
+            </div>
+            <div class="project-item">
+              <div class="project-header">
+                <span class="project-name">基于CBI的专业英语网络协作教学模式研究与实践</span>
+                <span class="project-role">主持</span>
+              </div>
+              <div class="project-org">西南大学教改项目</div>
+              <div class="project-code">2009JY046</div>
+            </div>
+            <div class="project-item">
+              <div class="project-header">
+                <span class="project-name">企业电子商务管理网络辅助课程建设</span>
+                <span class="project-role">主持</span>
+              </div>
+              <div class="project-org">西南大学教改项目</div>
+              <div class="project-code">2007JY021</div>
+            </div>
+            <div class="project-item">
+              <div class="project-header">
+                <span class="project-name">微型计算机接口技术实验教学改革</span>
+                <span class="project-role">主持</span>
+              </div>
+              <div class="project-org">西南大学教改项目</div>
+              <div class="project-code">2005-1-18</div>
+            </div>
+            <div class="project-item">
+              <div class="project-header">
+                <span class="project-name">基于Wiki技术的高校计算机公共课教学模式研究与实践</span>
+                <span class="project-role">主研</span>
+              </div>
+              <div class="project-org">重庆市教委教改项目</div>
+              <div class="project-code">09-3-028</div>
             </div>
           </div>
         </section>
