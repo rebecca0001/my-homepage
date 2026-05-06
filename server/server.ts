@@ -3,8 +3,13 @@
 
 import { createServer, type Server } from 'http';
 import express from 'express';
-import router from './routes/index';
+import dotenv from 'dotenv';
+import router from './routes/index.ts';
 import { setupVite } from './vite';
+import * as path from 'path';
+
+// 加载环境变量
+dotenv.config();
 
 const isDev = process.env.COZE_PROJECT_ENV !== 'PROD';
 const port = parseInt(process.env.PORT || '5000', 10);
@@ -29,6 +34,10 @@ async function startServer(): Promise<Server> {
   // 添加请求体解析 - 增加 limit 以支持图片上传
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+  // 静态文件服务 - 提供上传的头像
+  const uploadsDir = path.join(__dirname, 'uploads');
+  app.use('/uploads', express.static(uploadsDir));
 
   // 注册 API 路由
   app.use(router);

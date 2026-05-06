@@ -56,16 +56,16 @@ function renderPage(): void {
               <span class="info-value">智慧教育</span>
             </div>
             <div class="info-item">
-              <span class="info-label">当前工作</span>
-              <span class="info-value">本科AI通识课教学 & 现代教育技术硕士生培养</span>
+              <span class="info-label">研究兴趣</span>
+              <div class="interest-tags">
+                <span class="tag">学习分析</span>
+                <span class="tag">教育大模型应用</span>
+                <span class="tag">人机协同教学</span>
+              </div>
             </div>
             <div class="info-item">
-              <span class="info-label">个人兴趣</span>
-              <div class="interest-tags">
-                <span class="tag">智慧教育</span>
-                <span class="tag">日本影视剧</span>
-                <span class="tag">花样滑冰</span>
-              </div>
+              <span class="info-label">教授课程</span>
+              <span class="info-value">计算与智能技术导论 高级语言程序设计</span>
             </div>
             <div class="info-item">
               <span class="info-label">教育背景</span>
@@ -111,6 +111,34 @@ function renderPage(): void {
             <div class="project-item">
               <div class="project-header">
                 <span class="project-name">竹片粗铣连续化定向进料系统研发</span>
+                <span class="project-role">主持</span>
+              </div>
+              <div class="project-org">委托研发</div>
+            </div>
+            <div class="project-item">
+              <div class="project-header">
+                <span class="project-name">基于移动终端的家校通系统研发</span>
+                <span class="project-role">主持</span>
+              </div>
+              <div class="project-org">委托研发</div>
+            </div>
+            <div class="project-item">
+              <div class="project-header">
+                <span class="project-name">竹种病害图像数据集的构建与优化</span>
+                <span class="project-role">主持</span>
+              </div>
+              <div class="project-org">委托研发</div>
+            </div>
+            <div class="project-item">
+              <div class="project-header">
+                <span class="project-name">镁合金板材垂直度在线检测系统研发</span>
+                <span class="project-role">主持</span>
+              </div>
+              <div class="project-org">委托研发</div>
+            </div>
+            <div class="project-item">
+              <div class="project-header">
+                <span class="project-name">实验用品管理系统研发</span>
                 <span class="project-role">主持</span>
               </div>
               <div class="project-org">委托研发</div>
@@ -188,6 +216,11 @@ function renderPage(): void {
             <div class="message assistant">
               你好！我是WX的数字分身，有什么想了解的可以问我～ 比如我的研究方向、对学生的期望，或者怎么联系我，都可以聊聊。
             </div>
+          </div>
+          <div class="quick-questions">
+            <button class="quick-question-btn" data-question="我的研究方向">我的研究方向</button>
+            <button class="quick-question-btn" data-question="对学生的期望">对学生的期望</button>
+            <button class="quick-question-btn" data-question="如何联系我">如何联系我</button>
           </div>
           <div class="chat-input-container">
             <input 
@@ -385,10 +418,110 @@ function initChat(): void {
   const chatMessagesEl = document.getElementById('chatMessages');
   const chatInput = document.getElementById('chatInput') as HTMLInputElement;
   const sendBtn = document.getElementById('sendBtn');
+  const quickQuestionBtns = document.querySelectorAll('.quick-question-btn');
 
   if (!chatMessagesEl || !chatInput || !sendBtn) return;
 
   const chatMessages = chatMessagesEl;
+
+  // 绑定快捷问题按钮事件
+  quickQuestionBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const question = btn.getAttribute('data-question');
+      if (question) {
+        chatInput.value = question;
+        sendMessage();
+      }
+    });
+  });
+
+  // 智能本地响应系统
+  function getSmartResponse(message: string): string {
+    const lowerMessage = message.toLowerCase();
+    
+    // 问候语
+    if (lowerMessage.includes('你好') || lowerMessage.includes('嗨') || lowerMessage.includes('哈喽') || lowerMessage.includes('您好') || lowerMessage.includes('嗨') || lowerMessage.includes('hi')) {
+      return '你好！很高兴见到你。我是WX的数字分身，有什么想了解的可以问我～';
+    }
+    
+    // 感谢语
+    if (lowerMessage.includes('谢谢') || lowerMessage.includes('感谢') || lowerMessage.includes('多谢') || lowerMessage.includes('谢了')) {
+      return '不客气！如果你还有其他问题，随时告诉我。';
+    }
+    
+    // 告别语
+    if (lowerMessage.includes('再见') || lowerMessage.includes('拜拜') || lowerMessage.includes('bye') || lowerMessage.includes('下次见')) {
+      return '再见！希望我们下次再聊。';
+    }
+    
+    // 研究方向
+    if (lowerMessage.includes('研究方向') || lowerMessage.includes('研究兴趣') || lowerMessage.includes('研究领域') || lowerMessage.includes('研究内容')) {
+      return '我的研究方向是智慧教育，主要研究兴趣包括学习分析、教育大模型应用和人机协同教学。我希望通过这些研究，能够为教育领域带来更多创新和改进。';
+    }
+    
+    // 学生期望
+    if (lowerMessage.includes('学生') && (lowerMessage.includes('期望') || lowerMessage.includes('要求') || lowerMessage.includes('希望') || lowerMessage.includes('标准'))) {
+      return '我对学生的期望是认真、主动思考、有好奇心。具体技能可以教，但态度要端正。我希望学生能够积极参与课堂讨论，主动探索知识，并且培养解决问题的能力。';
+    }
+    
+    // 联系方式
+    if (lowerMessage.includes('联系') || lowerMessage.includes('邮箱') || lowerMessage.includes('如何联系') || lowerMessage.includes('联系方式') || lowerMessage.includes('电话')) {
+      return '你可以通过主页留言，或者邮件联系我。我的邮箱是544069255@qq.com。请关注主页底部的联系方式获取更多信息。';
+    }
+    
+    // 课程信息
+    if (lowerMessage.includes('课程') || lowerMessage.includes('教授') || lowerMessage.includes('教学') || lowerMessage.includes('上课')) {
+      return '我目前教授的课程有计算与智能技术导论和高级语言程序设计。这些课程旨在帮助学生掌握计算机科学的基础知识和编程技能。';
+    }
+    
+    // 教育背景
+    if (lowerMessage.includes('教育背景') || lowerMessage.includes('学历') || lowerMessage.includes('毕业') || lowerMessage.includes('学位') || lowerMessage.includes('学校')) {
+      return '我拥有西南大学的博士学位，专业是农业资源利用。之前还获得了西南大学的硕士学位和中国人民解放军空军雷达学院的学士学位。我的教育背景为我现在的研究和教学工作奠定了坚实的基础。';
+    }
+    
+    // 关于AI在教育中的应用
+    if ((lowerMessage.includes('ai') || lowerMessage.includes('人工智能') || lowerMessage.includes('大模型') || lowerMessage.includes('智能')) && (lowerMessage.includes('教育') || lowerMessage.includes('教学') || lowerMessage.includes('学习'))) {
+      return '我认为人工智能在教育中有着巨大的潜力。它可以帮助个性化学习、自动化评估、提供智能辅导等。但同时，我们也需要注意平衡技术与人文关怀，确保AI能够真正服务于教育的本质目标。';
+    }
+    
+    // 关于未来教育
+    if (lowerMessage.includes('未来') && (lowerMessage.includes('教育') || lowerMessage.includes('教学') || lowerMessage.includes('学习'))) {
+      return '我认为未来教育会更加个性化、智能化和全球化。技术将在教育中发挥更大的作用，但教师的角色仍然不可替代，他们将更多地成为学习的引导者和促进者。';
+    }
+    
+    // 关于个人兴趣
+    if (lowerMessage.includes('兴趣') || lowerMessage.includes('爱好') || lowerMessage.includes('喜欢') || lowerMessage.includes('热爱')) {
+      return '我的主要兴趣是智慧教育研究，包括学习分析、教育大模型应用和人机协同教学。此外，我也喜欢探索新技术在教育中的应用，以及与学生交流和分享知识。';
+    }
+    
+    // 关于职业规划
+    if (lowerMessage.includes('职业') || lowerMessage.includes('规划') || lowerMessage.includes('发展') || lowerMessage.includes('未来计划')) {
+      return '我的职业规划是继续深入研究智慧教育领域，探索AI与教育教学的深度融合，为教育创新做出贡献。同时，我也希望能够培养更多优秀的学生，帮助他们实现自己的学术和职业目标。';
+    }
+    
+    // 关于教学方法
+    if (lowerMessage.includes('教学方法') || lowerMessage.includes('教学理念') || lowerMessage.includes('教学方式') || lowerMessage.includes('教学风格')) {
+      return '我的教学理念是注重培养学生的思维能力和实践能力，鼓励学生主动思考和探索。我喜欢将复杂的概念讲得通俗易懂，通过实际案例和互动式教学来提高学生的学习兴趣和效果。';
+    }
+    
+    // 关于学术成就
+    if (lowerMessage.includes('学术') || lowerMessage.includes('成就') || lowerMessage.includes('成果') || lowerMessage.includes('论文') || lowerMessage.includes('研究成果')) {
+      return '我在智慧教育领域有一些研究成果，主要集中在学习分析、教育大模型应用和人机协同教学方面。我希望通过持续的研究，能够为教育领域带来更多有价值的贡献。';
+    }
+    
+    // 关于教育技术
+    if (lowerMessage.includes('教育技术') || lowerMessage.includes('技术应用') || lowerMessage.includes('教育工具') || lowerMessage.includes('教学技术')) {
+      return '我认为教育技术是推动教育创新的重要力量。我关注学习分析技术、教育大模型、智能辅导系统等新兴技术在教育中的应用，希望能够通过技术手段提高教学效果和学习体验。';
+    }
+    
+    // 通用问题 - 根据关键词生成更具体的回复
+    if (lowerMessage.includes('什么') || lowerMessage.includes('为什么') || lowerMessage.includes('如何') || lowerMessage.includes('怎样') || lowerMessage.includes('？')) {
+      return `你好！关于你提到的"${message}"，我正在努力学习相关知识。作为一名大学教师，我的主要研究方向是智慧教育，包括学习分析、教育大模型应用和人机协同教学。如果你有关于这些方面的问题，或者想了解我的教学理念、对学生的期望，以及如何联系我，我很乐意为你提供更详细的信息。`;
+    }
+    
+    // 其他问题
+    return `你好！我是WX的数字分身。关于"${message}"这个话题，我正在不断学习和探索中。作为一名专注于智慧教育研究的大学教师，我很乐意与你分享我在学习分析、教育大模型应用和人机协同教学方面的见解。如果你有任何关于教育、技术或我的研究领域的问题，都可以随时问我。`;
+  }
 
   // 发送消息
   const sendMessage = async (): Promise<void> => {
@@ -406,17 +539,62 @@ function initChat(): void {
     const typingDiv = addTypingIndicator();
 
     try {
-      // 调用后端 API
+      // 使用服务器端代理来避免 CORS 问题
+      console.log('Sending request to server-side proxy...');
+      console.log('User message:', message);
+      
+      // 构建系统提示词
+      const systemPrompt = `你是部署在我个人主页的专属数字分身，负责解答访客关于我的所有问题。
+
+【核心职责】
+- 介绍我的个人情况、工作研究、近期动态、联系方式
+- 回答与计算机、人工智能、现代教育技术、教育等相关的问题
+
+【我的信息】
+- 身份：高校计算机专业教师，深耕智慧教育领域
+- 核心工作：主讲大学人工智能通识课程，高级程序设计语言，指导现代教育技术方向硕士生
+- 研究方向：学习分析、教育大模型应用、人机协同教学
+- 教育背景：
+  - 博士：西南大学，农业资源利用，2005-2009
+  - 硕士：西南大学，农业机械化工程，2001-2004
+  - 学士：中国人民解放军空军雷达学院，电子信息，1994-1998
+
+【回答要求】
+- 语气友好平易近人
+- 表达通俗真诚、简洁精炼，不冗余
+- 不堆砌专业术语，不刻意装专家
+
+【严格规则】
+- 严禁编造经历
+- 不清楚的问题直接说明
+- 拒绝无关闲聊与个人隐私问题（邮箱联系方式除外）
+
+现在开始对话。`;
+      
+      // 构建消息列表
+      const messages = [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: message }
+      ];
+      
+      // 调用服务器端代理
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ messages: conversationHistory }),
+        body: JSON.stringify({
+          message: message,
+          messages: messages
+        }),
       });
 
+      console.log('Response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Network response was not ok: ${response.status} - ${errorText}`);
       }
 
       // 移除加载指示器
@@ -424,17 +602,30 @@ function initChat(): void {
 
       // 解析 JSON 响应
       const data = await response.json();
-      const fullContent = data.content || '抱歉，我没有得到有效回复。';
-
-      // 添加 AI 响应
-      addMessage('assistant', fullContent);
-
-      // 保存到历史
-      conversationHistory.push({ role: 'assistant', content: fullContent });
+      console.log('Response data:', data);
+      
+      // 检查是否有有效内容
+      if (data.content) {
+        const content = data.content;
+        console.log('AI response:', content);
+        // 添加 AI 响应
+        addMessage('assistant', content);
+        // 保存到历史
+        conversationHistory.push({ role: 'assistant', content: content });
+      } else {
+        console.error('Invalid response format:', data);
+        // 显示错误信息
+        const errorResponse = '抱歉，AI 服务暂时不可用，请稍后再试。';
+        addMessage('assistant', errorResponse);
+        conversationHistory.push({ role: 'assistant', content: errorResponse });
+      }
     } catch (error) {
       console.error('Chat error:', error);
       typingDiv.remove();
-      addMessage('assistant', '抱歉，出了点小问题，请稍后再试。');
+      // 显示错误信息
+      const errorResponse = '调用失败，请检查Key或网络';
+      addMessage('assistant', errorResponse);
+      conversationHistory.push({ role: 'assistant', content: errorResponse });
     }
   };
 
